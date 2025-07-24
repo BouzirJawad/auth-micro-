@@ -5,11 +5,10 @@ const { generateToken } = require("../config/jwt");
 const register = async (req, res) => {
   try {
     const { firstName, lastName, email, password, role } = req.body;
-    const user = await User.findOne({ email });
+    const existingUser = await User.findOne({ email });
 
-    if (user) {
-      res.status(404).json({ message: "User already exists!" });
-      return;
+    if (existingUser) {
+      return res.status(404).json({ message: "User already exists!" });
     }
 
     const hashPass = await bcrypt.hash(password, 10);
@@ -22,7 +21,19 @@ const register = async (req, res) => {
     });
 
     await newUser.save();
-    res.status(201).json({ message: "User registered successfully!", userId: newUser._id });
+
+    const user = {
+      _id: newUser._id,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      email: newUser.email,
+      role: newUser.role,
+    };
+
+    res.status(201).json({
+      message: "User registered successfully!",
+      user
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server error, Enable to register!" });
@@ -51,19 +62,17 @@ const login = async (req, res) => {
     }
 
     const token = generateToken(user._id, user.role);
-    res
-      .status(201)
-      .json({
-        messge: "Login successful",
-        token,
-        user: {
-          id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          role: user.role
-        },
-      });
+    res.status(201).json({
+      messge: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server error, Enable to login!" });
