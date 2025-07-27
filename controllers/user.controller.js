@@ -1,8 +1,9 @@
 const User = require("../models/User")
 
 const getUser = async (req, res) => {
+  const { userId } = req.params;
   try {
-    const user = await User.findById(req.params.id)
+    const user = await User.findById(userId)
 
     if (!user) {
       return res.status(404).json({ message: "User not found"})
@@ -19,7 +20,7 @@ const deleteUser = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const user =  await User.findById( { _id: userId })
+    const user =  await User.findById(userId)
 
     if (!user) {
       return res.status(404).json({ message: "User not found" })
