@@ -15,12 +15,33 @@ const validateRegister = [
     .normalizeEmail(),
   body("password")
     .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters long"),
+    .withMessage("Password must be at least 6 characters long")
+    .matches(/\d/)
+    .withMessage("Password must contain at least one number")
+    .matches(/[A-Z]/)
+    .withMessage("Password must contain at least one uppercase letter"),
 ];
 
 const validateLogin = [
-  body("email").isEmail().withMessage("Please enter a valid email"),
-  body("password").exists().withMessage("Password is required"),
+  body("email").notEmpty().isEmail().withMessage("Please enter a valid email"),
+  body("password").notEmpty().withMessage("Password is required"),
+];
+
+const validateRoleUpdate = [
+  body("role")
+    .isIn(["worker", "seller", "client", "admin"])
+    .withMessage("Invalid role"),
+];
+
+const validateProfile = [
+  body("profile.image")
+    .optional()
+    .isString()
+    .withMessage("Profile image must be a valid string"),
+  body("profile.imagePublicId")
+    .optional()
+    .isString()
+    .withMessage("Profile image public ID must be a valid string"),
 ];
 
 const checkValidation = (req, res, next) => {
