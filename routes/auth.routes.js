@@ -6,8 +6,4 @@ const { validateLogin, validateRegister, checkValidation } = require("../middlew
 router.post("/register", validateRegister, checkValidation, authController.register)
 router.post("/login", validateLogin, checkValidation, authController.login)
 
-router.get("/test", (req, res) =>{
-    res.send("auth bakcend working")
-})
-
 module.exports = router

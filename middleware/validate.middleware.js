@@ -30,10 +30,25 @@ const validateLogin = [
 const validateRoleUpdate = [
   body("role")
     .isIn(["worker", "seller", "client", "admin"])
-    .withMessage("Invalid role"),
+    .withMessage("Invalid rol"),
 ];
 
 const validateProfile = [
+  body("firstName")
+    .optional()
+    .trim()
+    .isLength({ min: 3, max: 30 })
+    .withMessage("First name must be between 3 and 30 characters"),
+  body("lastName")
+    .optional()
+    .trim()
+    .isLength({ min: 3, max: 30 })
+    .withMessage("Last name must be between 3 and 30 characters"),
+  body("email")
+    .optional()
+    .isEmail()
+    .withMessage("Please enter a valid email")
+    .normalizeEmail(),
   body("profile.image")
     .optional()
     .isString()
@@ -47,9 +62,17 @@ const validateProfile = [
 const checkValidation = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ error: errors.array() });
+    return res
+      .status(400)
+      .json({ error: errors.array().map((err) => err.msg) });
   }
   next();
 };
 
-module.exports = { validateLogin, validateRegister, checkValidation };
+module.exports = {
+  validateLogin,
+  validateRegister,
+  checkValidation,
+  validateRoleUpdate,
+  validateProfile,
+};

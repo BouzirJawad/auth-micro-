@@ -4,35 +4,39 @@ const { generateToken } = require("../config/jwt");
 
 const register = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, role } = req.body;
+    const { firstName, lastName, email, password, confirmPassword } = req.body;
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords must match"})
+    }
+
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      return res.status(404).json({ message: "User already exists!" });
+      return res.status(409).json({ message: "User already exists!" });
     }
 
+
     const hashPass = await bcrypt.hash(password, 10);
-    const newUser = new User({
+    const user = new User({
       firstName,
       lastName,
       email,
       password: hashPass,
-      role: role || "student",
+      role: "client"
     });
 
-    await newUser.save();
-
-    const user = {
-      _id: newUser._id,
-      firstName: newUser.firstName,
-      lastName: newUser.lastName,
-      email: newUser.email,
-      role: newUser.role,
-    };
+    await user.save();
 
     res.status(201).json({
       message: "User registered successfully!",
-      user
+      user: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      }
     });
   } catch (error) {
     console.error(error.message);
@@ -66,12 +70,13 @@ const login = async (req, res) => {
       messge: "Login successful",
       token,
       user: {
-        id: user._id,
+        _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         role: user.role,
-      },
+        profile: user.profile || null,
+      }
     });
   } catch (error) {
     console.error(error.message);
