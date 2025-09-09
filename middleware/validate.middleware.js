@@ -30,7 +30,7 @@ const validateLogin = [
 const validateRoleUpdate = [
   body("role")
     .isIn(["worker", "seller", "client", "admin"])
-    .withMessage("Invalid rol"),
+    .withMessage("Invalid role"),
 ];
 
 const validateProfile = [
