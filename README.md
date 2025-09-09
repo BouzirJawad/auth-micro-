@@ -111,29 +111,37 @@ checkRole(["admin"])
 🖼 Profile Image Handling
 
 Images uploaded using Multer to uploads/ temporarily.
+
 Then uploaded to Cloudinary and local file removed.
+
 Old Cloudinary image deleted when updating profile.
 
 ✅ Validations
 
 Registration: name, email, password rules
+
 Login: email & password required
+
 Profile update: optional fields + password confirmation
+
 Role update: only admin can change roles
 
 📦 Tech Stack
+```
 Node.js, Express.js
 MongoDB + Mongoose
 JWT (authentication)
 Cloudinary (image storage)
 Multer (file upload)
 Express-Validator (validation)
+```
 
 📌 Future Enhancements
+````
 Add Refresh Tokens
 Add Forgot Password / Reset Password
 Add Email Verification
-
+````
 
 ---
 ✅ Author
